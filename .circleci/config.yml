@@ -1,0 +1,40 @@
+version: 2.1
+
+jobs:
+  integration-test-docker-executor:
+    docker:
+      - image: circleci/node:fermium
+    working_directory: ~/project/test-project
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm ci
+      - run: npm run test
+  integration-test-remote-docker:
+    docker:
+      - image: circleci/node:fermium
+    working_directory: ~/project/test-project
+    steps:
+      - checkout:
+          path: ~/project
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run: docker-compose build test
+      - run: docker-compose up -d test
+      - run: docker-compose exec test './node_modules/.bin/jest'
+  integration-test-machine-executor:
+    machine:
+      image: ubuntu-2004:202010-01
+    working_directory: ~/project/test-project
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm ci
+      - run: npm run test
+
+workflows:
+  test:
+    jobs:
+      - integration-test-docker-executor
+      - integration-test-remote-docker
+      - integration-test-machine-executor
