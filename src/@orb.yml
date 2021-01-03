@@ -1,0 +1,10 @@
+version: 2.1
+
+description: >
+  This orb makes it easier to run jest tests in your CircleCI environment. A primary
+  benefit is automatically restoring the jest cache for faster subsequent test runs.
+
+display:
+  # TODO
+  # home_url: "https://www.website.com/docs"
+  source_url: "https://www.github.com/blimmer/jest-circleci-orb"

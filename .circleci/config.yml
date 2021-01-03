@@ -1,5 +1,25 @@
 version: 2.1
 
+orbs:
+  # TODO enable
+  # jest: blimmer/jest@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@10.0
+
+# Pipeline Parameters
+## These parameters are used internally by orb-tools. Skip to the Jobs section.
+parameters:
+  run-integration-tests:
+    description: An internal flag to prevent integration test from running before a development version has been created.
+    type: boolean
+    default: false
+  dev-orb-version:
+    description: >
+      The development version of the orb to test.
+      This value is automatically adjusted by the "trigger-integration-tests-workflow" job to correspond with the specific version created by the commit and should not be edited.
+      A "dev:alpha" version must exist for the initial pipeline run.
+    type: string
+    default: "dev:alpha"
+
 jobs:
   integration-test-docker-executor:
     docker:
@@ -33,6 +53,11 @@ jobs:
       - run: npm run test
 
 workflows:
+  test-pack:
+    unless: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - orb-tools/lint # Lint Yaml files
+      - orb-tools/pack # Pack orb sourc
   test:
     jobs:
       - integration-test-docker-executor

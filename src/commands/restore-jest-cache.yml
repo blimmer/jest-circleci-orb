@@ -1,0 +1,14 @@
+description: >
+  This command restores the jest-cache directory.
+parameters:
+  jest-cache-location:
+    type: string
+    default: .jest-cache
+    description: "The location of the jest cacheDirectory"
+steps:
+  - run:
+      name: Export commit hash for cache key
+      command: git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
+  - restore_cache:
+      keys:
+        - jest-cache-{{ checksum "/tmp/jest-cache-previous-commit-hash.txt" }}
