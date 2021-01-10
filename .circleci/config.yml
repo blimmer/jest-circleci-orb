@@ -1,8 +1,7 @@
 version: 2.1
 
 orbs:
-  # TODO enable
-  # jest: blimmer/jest@<<pipeline.parameters.dev-orb-version>>
+  jest: blimmer/jest@<<pipeline.parameters.dev-orb-version>>
   orb-tools: circleci/orb-tools@10.0
 
 # Pipeline Parameters
@@ -29,7 +28,10 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
+      - run: jest/restore-cache
       - run: npm run test
+      - run: touch .jest-cache/RESTORED_FILE.txt
+      - run: jest/save-cache
   integration-test-remote-docker:
     docker:
       - image: circleci/node:fermium
@@ -39,9 +41,12 @@ jobs:
           path: ~/project
       - setup_remote_docker:
           docker_layer_caching: false
+      - run: jest/restore-cache
       - run: docker-compose build test
       - run: docker-compose up -d test
       - run: docker-compose exec test './node_modules/.bin/jest'
+      - run: touch .jest-cache/RESTORED_FILE.txt
+      - run: jest/save-cache
   integration-test-machine-executor:
     machine:
       image: ubuntu-2004:202010-01
@@ -50,7 +55,10 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
+      - run: jest/restore-cache
       - run: npm run test
+      - run: touch .jest-cache/RESTORED_FILE.txt
+      - run: jest/save-cache
 
 workflows:
   test-pack:
