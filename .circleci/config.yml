@@ -29,7 +29,8 @@ jobs:
       - run:
           name: Write out a test file
           command: |
-            touch "~/project/.jest-cache/RESTORED_FILE.txt"
+            mkdir -p ~/project/.jest-cache
+            touch ~/project/.jest-cache/RESTORED_FILE.txt
       - run:
           name: Configure jest orb
           command: |
