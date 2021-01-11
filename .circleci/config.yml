@@ -29,14 +29,15 @@ jobs:
       - run:
           name: Write out a test file
           command: |
-            mkdir -p ~/project/.jest-cache
-            touch ~/project/.jest-cache/RESTORED_FILE.txt
+            mkdir -p ~/project/test-project/.jest-cache
+            touch ~/project/test-project/.jest-cache/RESTORED_FILE.txt
       - run:
           name: Configure jest orb
           command: |
             # Trick jest into writing the previous cache during the save-cache command
             git rev-parse HEAD~1 > /tmp/jest-cache-current-commit-hash.txt
-      - jest/save-cache
+      - jest/save-cache:
+          jest-cache-location: test-project/.jest-cache
 
   integration-test-docker-executor:
     docker:

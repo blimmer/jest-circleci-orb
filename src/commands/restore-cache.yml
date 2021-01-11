@@ -1,10 +1,5 @@
 description: >
   This command restores the jest-cache directory.
-parameters:
-  jest-cache-location:
-    type: string
-    default: .jest-cache
-    description: "The location of the jest cacheDirectory"
 steps:
   - run:
       name: Export commit hashes for cache keys
