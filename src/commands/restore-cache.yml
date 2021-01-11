@@ -7,8 +7,10 @@ parameters:
     description: "The location of the jest cacheDirectory"
 steps:
   - run:
-      name: Export commit hash for cache key
-      command: git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
+      name: Export commit hashes for cache keys
+      command: |
+       git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
+       git rev-parse HEAD > /tmp/jest-cache-current-commit-hash.txt
   - restore_cache:
       keys:
         - jest-cache-{{ checksum "/tmp/jest-cache-previous-commit-hash.txt" }}

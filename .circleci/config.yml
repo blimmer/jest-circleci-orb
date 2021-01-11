@@ -28,6 +28,7 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
+      - jest/configure
       - jest/restore-cache
       - run: npm run test
       - run: touch .jest-cache/RESTORED_FILE.txt
@@ -41,6 +42,7 @@ jobs:
           path: ~/project
       - setup_remote_docker:
           docker_layer_caching: false
+      - jest/configure
       - jest/restore-cache
       - run: docker-compose build test
       - run: docker-compose up -d test
@@ -55,6 +57,7 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
+      - jest/configure
       - jest/restore-cache
       - run: npm run test
       - run: touch .jest-cache/RESTORED_FILE.txt
