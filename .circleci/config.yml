@@ -4,7 +4,6 @@ orbs:
   jest: blimmer/jest@<<pipeline.parameters.dev-orb-version>>
   orb-tools: circleci/orb-tools@10.0
 
-# Pipeline Parameters
 parameters:
   run-integration-tests:
     description: An internal flag to prevent integration test from running before a development version has been created.
