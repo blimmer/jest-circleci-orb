@@ -18,6 +18,25 @@ parameters:
     default: "dev:alpha"
 
 jobs:
+  write-integration-test-cache:
+    docker:
+      - image: circleci/node:fermium
+    steps:
+      - checkout:
+          path: ~/project
+      - jest/configure
+      - jest/restore-cache
+      - run:
+          name: Write out a test file
+          command: |
+            touch "~/project/.jest-cache/RESTORED_FILE.txt"
+      - run:
+          name: Configure jest orb
+          command: |
+            # Trick jest into writing the previous cache during the save-cache command
+            git rev-parse HEAD~1 > /tmp/jest-cache-current-commit-hash.txt
+      - jest/save-cache
+
   integration-test-docker-executor:
     docker:
       - image: circleci/node:fermium
@@ -29,8 +48,6 @@ jobs:
       - jest/configure
       - jest/restore-cache
       - run: npm run test
-      - run: touch .jest-cache/RESTORED_FILE.txt
-      - jest/save-cache
   integration-test-remote-docker:
     docker:
       - image: circleci/node:fermium
@@ -45,8 +62,6 @@ jobs:
       - run: docker-compose build test
       - run: docker-compose up -d test
       - run: docker-compose exec test './node_modules/.bin/jest'
-      - run: touch .jest-cache/RESTORED_FILE.txt
-      - jest/save-cache
   integration-test-machine-executor:
     machine:
       image: ubuntu-2004:202010-01
@@ -58,8 +73,6 @@ jobs:
       - jest/configure
       - jest/restore-cache
       - run: npm run test
-      - run: touch .jest-cache/RESTORED_FILE.txt
-      - jest/save-cache
 
 workflows:
   # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
@@ -98,9 +111,15 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       # Run any integration tests defined within the `jobs` key.
-      - integration-test-docker-executor
-      - integration-test-remote-docker
-      - integration-test-machine-executor
+      - integration-test-docker-executor:
+          requires:
+            - write-integration-test-cache
+      - integration-test-remote-docker:
+          requires:
+            - write-integration-test-cache
+      - integration-test-machine-executor:
+          requires:
+            - write-integration-test-cache
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
       # as that will determine whether a patch, minor or major
