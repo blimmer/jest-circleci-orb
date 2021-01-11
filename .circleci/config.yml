@@ -21,6 +21,7 @@ jobs:
   write-integration-test-cache:
     docker:
       - image: circleci/node:fermium
+    working_directory: ~/project/test-project
     steps:
       - checkout:
           path: ~/project
@@ -29,15 +30,14 @@ jobs:
       - run:
           name: Write out a test file
           command: |
-            mkdir -p ~/project/test-project/.jest-cache
-            touch ~/project/test-project/.jest-cache/RESTORED_FILE.txt
+            mkdir -p .jest-cache
+            touch .jest-cache/RESTORED_FILE.txt
       - run:
           name: Configure jest orb
           command: |
             # Trick jest into writing the previous cache during the save-cache command
             git rev-parse HEAD~1 > /tmp/jest-cache-current-commit-hash.txt
-      - jest/save-cache:
-          jest-cache-location: test-project/.jest-cache
+      - jest/save-cache
 
   integration-test-docker-executor:
     docker:
