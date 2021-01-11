@@ -1,0 +1,13 @@
+description: >
+  This command writes out jest orb dependencies
+parameters:
+  tmpdir:
+    type: string
+    default: /tmp
+    description: "A tmpdir location to write orb dependency files"
+steps:
+  - run:
+      name: Export commit hashes for cache keys
+      command: |
+       git rev-parse HEAD~1 > << parameters.tmpdir >>/jest-cache-previous-commit-hash.txt
+       git rev-parse HEAD > << parameters.tmpdir >>/jest-cache-current-commit-hash.txt

@@ -1,12 +1,9 @@
 version: 2.1
 
 orbs:
-  # TODO enable
-  # jest: blimmer/jest@<<pipeline.parameters.dev-orb-version>>
+  jest: blimmer/jest@<<pipeline.parameters.dev-orb-version>>
   orb-tools: circleci/orb-tools@10.0
 
-# Pipeline Parameters
-## These parameters are used internally by orb-tools. Skip to the Jobs section.
 parameters:
   run-integration-tests:
     description: An internal flag to prevent integration test from running before a development version has been created.
@@ -21,6 +18,27 @@ parameters:
     default: "dev:alpha"
 
 jobs:
+  write-integration-test-cache:
+    docker:
+      - image: circleci/node:fermium
+    working_directory: ~/project/test-project
+    steps:
+      - checkout:
+          path: ~/project
+      - jest/configure
+      - jest/restore-cache
+      - run:
+          name: Write out a test file
+          command: |
+            mkdir -p .jest-cache
+            touch .jest-cache/RESTORED_FILE.txt
+      - run:
+          name: Configure jest orb
+          command: |
+            # Trick jest into writing the previous cache during the save-cache command
+            git rev-parse HEAD~1 > /tmp/jest-cache-current-commit-hash.txt
+      - jest/save-cache
+
   integration-test-docker-executor:
     docker:
       - image: circleci/node:fermium
@@ -29,6 +47,8 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
+      - jest/configure
+      - jest/restore-cache
       - run: npm run test
   integration-test-remote-docker:
     docker:
@@ -39,6 +59,8 @@ jobs:
           path: ~/project
       - setup_remote_docker:
           docker_layer_caching: false
+      - jest/configure
+      - jest/restore-cache
       - run: docker-compose build test
       - run: docker-compose up -d test
       - run: docker-compose exec test './node_modules/.bin/jest'
@@ -50,16 +72,74 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
+      - jest/configure
+      - jest/restore-cache
       - run: npm run test
 
 workflows:
+  # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
+  # This workflow will run on every commit
   test-pack:
     unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint # Lint Yaml files
-      - orb-tools/pack # Pack orb sourc
-  test:
+      - orb-tools/pack # Pack orb source
+      # If you accept building open source forks, protect your secrects behind a restricted context.
+      # A job containing restricted context (which holds your orb publishing credentials) may only be accessed by a user with proper permissions.
+      # An open source user may begin a pipeline with a PR, and once the pipeline is approved by an authorized user at this point, the pipeline will continue with the proper context permissions.
+      - hold-for-dev-publish:
+          type: approval
+          requires:
+            - orb-tools/lint
+            - orb-tools/pack
+      # Publish development version(s) of the orb.
+      - orb-tools/publish-dev:
+          orb-name: blimmer/jest
+          context: orb-publishing # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
+          requires: [hold-for-dev-publish]
+      # Trigger an integration workflow to test the
+      # dev:${CIRCLE_SHA1:0:7} version of your orb
+      - orb-tools/trigger-integration-tests-workflow:
+          name: trigger-integration-dev
+          context: orb-publishing
+          requires:
+            - orb-tools/publish-dev
+
+  # This `integration-test_deploy` workflow will only run
+  # when the run-integration-tests pipeline parameter is set to true.
+  # It is meant to be triggered by the "trigger-integration-tests-workflow"
+  # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
+  integration-test_deploy:
+    when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test-docker-executor
-      - integration-test-remote-docker
-      - integration-test-machine-executor
+      - write-integration-test-cache
+      # Run any integration tests defined within the `jobs` key.
+      - integration-test-docker-executor:
+          requires:
+            - write-integration-test-cache
+      - integration-test-remote-docker:
+          requires:
+            - write-integration-test-cache
+      - integration-test-machine-executor:
+          requires:
+            - write-integration-test-cache
+      # Publish a semver version of the orb. relies on
+      # the commit subject containing the text "[semver:patch|minor|major|skip]"
+      # as that will determine whether a patch, minor or major
+      # version will be published or if publishing should
+      # be skipped.
+      # e.g. [semver:patch] will cause a patch version to be published.
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: blimmer/jest
+          context: orb-publishing
+          add-pr-comment: false
+          fail-if-semver-not-indicated: true
+          publish-version-tag: false
+          requires:
+            - integration-test-docker-executor
+            - integration-test-remote-docker
+            - integration-test-machine-executor
+          filters:
+            branches:
+              only:
+                - main
