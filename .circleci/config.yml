@@ -110,6 +110,7 @@ workflows:
   integration-test_deploy:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
+      - write-integration-test-cache
       # Run any integration tests defined within the `jobs` key.
       - integration-test-docker-executor:
           requires:
