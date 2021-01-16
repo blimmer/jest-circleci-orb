@@ -6,3 +6,18 @@ steps:
       command: |
        git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
        git rev-parse HEAD > /tmp/jest-cache-current-commit-hash.txt
+  - run:
+      name: Check for remote docker
+      command: |
+        if ssh -o "StrictHostKeyChecking=no" remote-docker whoami; then
+          touch /tmp/jest-cache-using-remote-docker
+        fi
+  - run:
+      name: Install rsync if using remote docker
+      command: |
+        if [[ -e "/tmp/jest-cache-using-remote-docker" ]]; then
+          echo 'using remote docker. installing rsync for performance...'
+          sudo apt-get install -y rsync
+        else
+          echo 'not using remote docker'
+        fi

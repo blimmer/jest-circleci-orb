@@ -4,7 +4,7 @@ parameters:
   jest-cache-location:
     type: string
     default: .jest-cache
-    description: "The location of the jest cacheDirectory"
+    description: "The location of the jest cacheDirectory within the working directory"
 steps:
   - save_cache:
       key: jest-cache-{{ checksum "/tmp/jest-cache-current-commit-hash.txt" }}
