@@ -2,3 +2,5 @@ version: "3.9"
 services:
   test:
     build: .
+    volumes:
+      - ./.jest-cache:/home/node/app/.jest-cache
