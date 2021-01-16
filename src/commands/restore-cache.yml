@@ -1,5 +1,10 @@
 description: >
   This command restores the jest-cache directory.
+parameters:
+  jest-cache-location:
+    type: string
+    default: .jest-cache
+    description: "The location of the jest cacheDirectory within the working directory"
 steps:
   - run:
       name: Export commit hashes for cache keys
@@ -9,3 +14,14 @@ steps:
   - restore_cache:
       keys:
         - jest-cache-{{ checksum "/tmp/jest-cache-previous-commit-hash.txt" }}
+  - run:
+      name: Copy cache to remote docker if using
+      command: |
+        if [[ -e "/tmp/jest-cache-using-remote-docker" ]]; then
+          if [ -d << parameters.jest-cache-location >> ]; then
+            rsync  -a --rsync-path="mkdir -p $CIRCLE_WORKING_DIRECTORY/<< parameters.jest-cache-location >> && rsync" << parameters.jest-cache-location >> remote-docker:$CIRCLE_WORKING_DIRECTORY
+          fi
+        else
+          echo 'not using remote docker'
+        fi
+
