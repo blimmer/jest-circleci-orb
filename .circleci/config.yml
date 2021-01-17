@@ -123,6 +123,9 @@ workflows:
       - integration-test-machine-executor:
           requires:
             - write-integration-test-cache
+      - jest/test:
+          requires:
+            - write-integration-test-cache
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
       # as that will determine whether a patch, minor or major

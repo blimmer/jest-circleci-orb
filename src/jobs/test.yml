@@ -1,0 +1,47 @@
+description: >
+  Run jest tests
+
+executor: << parameters.executor >>
+
+parameters:
+  executor:
+    description: The executor to use
+    type: executor
+    default: default
+  setup-steps:
+    description: These steps are executed before all other steps. For example, you might log into a private NPM registry.
+    type: steps
+    default: []
+  npm-install-command:
+    description: The command to use to install dependencies with npm.
+    type: string
+    default: ci
+  jest-cache-location:
+    type: string
+    default: .jest-cache
+    description: The location of the jest cacheDirectory within the working directory
+  jest-command:
+    description: The command to use to run jest.
+    type: string
+    default: npx --no-install jest
+steps:
+  - steps: << parameters.setup-steps >>
+  - run:
+      name: Install dependencies
+      command: |
+        if [[ -e "package-lock.json" ]]; then
+          npm << parameters.npm-install-command >>
+        elif [[ -e "yarn.lock" ]]; then
+          yarn
+        else
+          echo 'no lockfile was present!'
+          exit 1
+        fi
+  - configure
+  - restore-cache:
+      jest-cache-location: << parameters.jest-cache-location >>
+  - run:
+      name: Run jest tests
+      command: << parameters.jest-command >>
+  - save-cache:
+      jest-cache-location: << parameters.jest-cache-location >>
