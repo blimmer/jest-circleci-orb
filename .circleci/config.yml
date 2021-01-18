@@ -136,6 +136,7 @@ workflows:
           requires:
             - write-integration-test-cache
       - jest/test:
+          name: jest/test
           requires:
             - write-integration-test-cache
           executor: jest-test-project-executor
@@ -144,6 +145,7 @@ workflows:
             - checkout:
                 path: ~/project
       - jest/test:
+          name: jest/test-unconfigured
           executor: jest-unconfigured-test-project-executor
           checkout: false
           setup-steps:
