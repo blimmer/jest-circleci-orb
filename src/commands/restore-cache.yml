@@ -6,16 +6,12 @@ parameters:
     default: .jest-cache
     description: "The location of the jest cacheDirectory within the working directory"
 steps:
-  - run:
-      name: Export commit hashes for cache keys
-      command: |
-       git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
-       git rev-parse HEAD > /tmp/jest-cache-current-commit-hash.txt
   - restore_cache:
+      name: Restoring jest cache
       keys:
         - jest-cache-{{ checksum "/tmp/jest-cache-previous-commit-hash.txt" }}
   - run:
-      name: Copy cache to remote docker if using
+      name: Copy jest cache to remote docker (if necessary)
       command: |
         if [[ -e "/tmp/jest-cache-using-remote-docker" ]]; then
           if [ -d << parameters.jest-cache-location >> ]; then
