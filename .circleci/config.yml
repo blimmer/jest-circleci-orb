@@ -19,10 +19,15 @@ parameters:
 
 executors:
   # required for custom working_directory
-  jest-job-executor:
+  jest-test-project-executor:
     docker:
       - image: cimg/node:lts
     working_directory: ~/project/test-project
+  jest-unconfigured-test-project-executor:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/project/test-project-unconfigured
+
 
 jobs:
   write-integration-test-cache:
@@ -131,9 +136,17 @@ workflows:
           requires:
             - write-integration-test-cache
       - jest/test:
+          name: jest/test
           requires:
             - write-integration-test-cache
-          executor: jest-job-executor
+          executor: jest-test-project-executor
+          checkout: false
+          setup-steps:
+            - checkout:
+                path: ~/project
+      - jest/test:
+          name: jest/test-unconfigured
+          executor: jest-unconfigured-test-project-executor
           checkout: false
           setup-steps:
             - checkout:
