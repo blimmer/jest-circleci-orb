@@ -17,6 +17,13 @@ parameters:
     type: string
     default: "dev:alpha"
 
+executors:
+  # required for custom working_directory
+  jest-job-executor:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/project/test-project
+
 jobs:
   write-integration-test-cache:
     docker:
@@ -126,6 +133,11 @@ workflows:
       - jest/test:
           requires:
             - write-integration-test-cache
+          executor: jest-job-executor
+          checkout: false
+          setup-steps:
+            - checkout:
+                path: ~/project
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
       # as that will determine whether a patch, minor or major

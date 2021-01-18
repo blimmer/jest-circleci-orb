@@ -12,6 +12,10 @@ parameters:
     description: These steps are executed before all other steps. For example, you might log into a private NPM registry.
     type: steps
     default: []
+  checkout:
+    type: boolean
+    default: true
+    description: Boolean for whether or not to checkout as a first step. Default is true.
   npm-install-command:
     description: The command to use to install dependencies with npm.
     type: string
@@ -26,6 +30,10 @@ parameters:
     default: npx --no-install jest
 steps:
   - steps: << parameters.setup-steps >>
+  - when:
+      condition: << parameters.checkout >>
+      steps:
+        - checkout
   - run:
       name: Install dependencies
       command: |
