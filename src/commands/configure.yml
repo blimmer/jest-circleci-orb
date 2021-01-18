@@ -2,19 +2,18 @@ description: >
   This command writes out jest orb dependencies
 steps:
   - run:
-      name: Export commit hashes for cache keys
+      name: Configure jest test environment
       command: |
-       git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
-       git rev-parse HEAD > /tmp/jest-cache-current-commit-hash.txt
-  - run:
-      name: Check for remote docker
-      command: |
+        # export commit hashes for cache restoration
+        git rev-parse HEAD~1 > /tmp/jest-cache-previous-commit-hash.txt
+        git rev-parse HEAD > /tmp/jest-cache-current-commit-hash.txt
+
+        # check for remote docker
         if ssh -o "StrictHostKeyChecking=no" remote-docker whoami; then
           touch /tmp/jest-cache-using-remote-docker
         fi
-  - run:
-      name: Install rsync if using remote docker
-      command: |
+
+        # install rsync if using remote docker
         if [[ -e "/tmp/jest-cache-using-remote-docker" ]]; then
           echo 'using remote docker. installing rsync for performance...'
           sudo apt-get install -y rsync
