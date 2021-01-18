@@ -16,6 +16,10 @@ parameters:
     type: boolean
     default: true
     description: Boolean for whether or not to checkout as a first step. Default is true.
+  jest-cache:
+    type: boolean
+    default: true
+    description: Boolean for whether or not to restore/save the jest cache.
   npm-install-command:
     description: The command to use to install dependencies with npm.
     type: string
@@ -46,10 +50,16 @@ steps:
           exit 1
         fi
   - configure
-  - restore-cache:
-      jest-cache-location: << parameters.jest-cache-location >>
+  - when:
+      condition: << parameters.jest-cache >>
+      steps:
+        - restore-cache:
+            jest-cache-location: << parameters.jest-cache-location >>
   - run:
       name: Run jest tests
       command: << parameters.jest-command >>
-  - save-cache:
-      jest-cache-location: << parameters.jest-cache-location >>
+  - when:
+      condition: << parameters.jest-cache >>
+      steps:
+        - save-cache:
+            jest-cache-location: << parameters.jest-cache-location >>

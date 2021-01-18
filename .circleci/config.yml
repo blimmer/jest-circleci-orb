@@ -135,6 +135,7 @@ workflows:
             - write-integration-test-cache
           executor: jest-job-executor
           checkout: false
+          jest-cache: false
           setup-steps:
             - checkout:
                 path: ~/project
