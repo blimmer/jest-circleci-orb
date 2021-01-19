@@ -146,7 +146,7 @@ workflows:
                 path: ~/project
             - run:
                 name: configure git
-                command: git config user.email "foobar@example.com" && git config user.name "FooBar
+                command: git config user.email "foobar@example.com" && git config user.name "FooBar"
       - jest/test:
           name: jest/test-unconfigured
           requires:
