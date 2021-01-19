@@ -141,20 +141,28 @@ workflows:
             - write-integration-test-cache
           executor: jest-test-project-executor
           checkout: false
-          jest-cache: false
           setup-steps:
             - checkout:
                 path: ~/project
+            - run:
+                name: configure git
+                command: git config user.email "foobar@example.com" && git config user.name "FooBar"
       - jest/test:
           name: jest/test-unconfigured
           requires:
             - write-integration-test-cache
           executor: jest-unconfigured-test-project-executor
           checkout: false
-          jest-cache: false
           setup-steps:
             - checkout:
                 path: ~/project
+            - run:
+                name: configure git
+                command: git config user.email "foobar@example.com" && git config user.name "FooBar"
+            - run:
+                # This prevents this step's save_cache step from poisoning other tests
+                name: no-op commit
+                command: echo 'change' >> README.md && git add README.md && git commit -m "no-op commit"
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
       # as that will determine whether a patch, minor or major
