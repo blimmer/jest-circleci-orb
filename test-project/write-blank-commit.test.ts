@@ -8,6 +8,13 @@ if (process.env.CIRCLECI) {
       });
       spawnSync("git", ["add", "README.md"]);
       spawnSync("git", ["commit", "-m", "no-op commit"]);
+      spawnSync(
+        "git",
+        ["rev-parse", "HEAD", ">", "/tmp/jest-cache-current-commit-hash.txt"],
+        {
+          shell: true,
+        }
+      );
     });
   });
 }
