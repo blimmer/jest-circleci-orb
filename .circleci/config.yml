@@ -179,6 +179,8 @@ workflows:
             - integration-test-docker-executor
             - integration-test-remote-docker
             - integration-test-machine-executor
+            - jest/test
+            - jest/test-unconfigured
           filters:
             branches:
               only:
