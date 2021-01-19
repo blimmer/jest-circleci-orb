@@ -146,11 +146,7 @@ workflows:
                 path: ~/project
             - run:
                 name: configure git
-                command: git config user.email "foobar@example.com" && git config user.name "FooBar"
-            - run:
-                # This prevents this step's save_cache step from poisoning other tests
-                name: no-op commit
-                command: echo 'change' >> README.md && git add README.md && git commit -m "no-op commit"
+                command: git config user.email "foobar@example.com" && git config user.name "FooBar
       - jest/test:
           name: jest/test-unconfigured
           requires:
