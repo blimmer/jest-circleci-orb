@@ -1,5 +1,5 @@
 description: >
-  Run jest tests
+  Run jest tests, restoring jest's cache for speedier tests.
 
 executor: << parameters.executor >>
 
@@ -21,15 +21,15 @@ parameters:
     default: true
     description: Boolean for whether or not to restore/save the jest cache.
   npm-install-command:
-    description: The command to use to install dependencies with npm.
     type: string
     default: ci
+    description: The command to use to install dependencies with npm.
   jest-cache-location:
     type: string
     default: .jest-cache
     description: The location of the jest cacheDirectory within the working directory
   jest-command:
-    description: The command to use to run jest.
+    description: The command to use to run jest
     type: string
     default: npx --no-install jest
 steps:

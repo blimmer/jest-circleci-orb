@@ -1,0 +1,14 @@
+description: Run jest tests
+
+usage:
+  version: 2.1
+
+  orbs:
+    # Replace x.y.z. with a real version number. All versions are listed here:
+    # https://github.com/blimmer/jest-circleci-orb/releases
+    jest: blimmer/jest@x.y.z
+
+  workflows:
+    test:
+      jobs:
+        - jest/test

@@ -1,5 +1,5 @@
 description: >
-  This command writes out jest orb dependencies
+  This command configures jest caching behaviors and must be run for jest/restore-cache and jest/save-cache to work properly.
 steps:
   - run:
       name: Configure jest test environment

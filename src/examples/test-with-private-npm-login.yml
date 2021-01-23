@@ -1,0 +1,22 @@
+description: Run jest tests, logging into a private NPM registry
+
+usage:
+  version: 2.1
+
+  orbs:
+    # Replace x.y.z. with a real version number. All versions are listed here:
+    # https://github.com/blimmer/jest-circleci-orb/releases
+    jest: blimmer/jest@x.y.z
+
+  workflows:
+    test:
+      jobs:
+        - jest/test:
+            context:
+              # This context contains the NPM_TOKEN environment variable used below
+              - npm
+            setup-steps:
+              - run:
+                  name: Login to NPM
+                  command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+
