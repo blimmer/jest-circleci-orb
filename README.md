@@ -66,7 +66,7 @@ version: 2.1
 
 orbs:
   # Replace x.y.z. with a real version number. All versions are listed here:
-  # https://github.com/blimmer/jest-circleci-orb/releases
+  # https://circleci.com/orbs/registry/orb/blimmer/jest
   jest: blimmer/jest@x.y.z
 
   workflows:
