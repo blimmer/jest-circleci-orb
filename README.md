@@ -25,9 +25,13 @@ test suite.
 - **Faster Typescript transpiling.** If you're using TypeScript with jest, your files are likely transpiled to Javascript
   before each run. By restoring the cache, jest will only transpile changed files.
 
-If you want to learn more about the jest cache, check out [Jest Architecture video](https://youtu.be/3YDiloj8_d0) on YouTube:
+If you want to learn more about the jest cache, check out [Jest Architecture video](https://youtu.be/3YDiloj8_d0) on YouTube.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/3YDiloj8_d0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div style='text-align: center'>
+  <a href='https://youtu.be/3YDiloj8_d0'>
+    <img src=https://img.youtube.com/vi/3YDiloj8_d0/0.jpg>
+  </a>
+</div>
 
 ## Usage
 
