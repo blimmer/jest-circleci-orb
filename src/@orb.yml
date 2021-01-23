@@ -2,8 +2,8 @@ version: 2.1
 
 description: >
   This orb makes it easier to run jest tests in your CircleCI environment. A primary
-  benefit is automatically restoring the jest cache for faster subsequent test runs
-  (see documentation for configuration details).
+  benefit is automatically restoring the jest cache for faster subsequent test runs.
+  You must configure jest for caching to work (see https://github.com/blimmer/jest-circleci-orb#configuration)
 
 display:
   source_url: "https://www.github.com/blimmer/jest-circleci-orb"

@@ -35,7 +35,7 @@ If you want to learn more about the jest cache, check out [Jest Architecture vid
 
 ## Usage
 
-See the [orb registry listing](https://circleci.com/orbs/registry/orb/blimmer/jest) for usage details.
+See the [orb registry listing](https://circleci.com/developer/orbs/orb/blimmer/jest) for usage details.
 
 ## Configuration
 
@@ -66,7 +66,7 @@ version: 2.1
 
 orbs:
   # Replace x.y.z. with a real version number. All versions are listed here:
-  # https://circleci.com/orbs/registry/orb/blimmer/jest
+  # https://circleci.com/developer/orbs/orb/blimmer/jest
   jest: blimmer/jest@x.y.z
 
   workflows:
@@ -75,7 +75,7 @@ orbs:
         - jest/test
 ```
 
-Refer to the [orb registry listing](https://circleci.com/orbs/registry/orb/blimmer/jest) for more examples.
+Refer to the [orb registry listing](https://circleci.com/developer/orbs/orb/blimmer/jest) for more examples.
 
 ## Contributing
 

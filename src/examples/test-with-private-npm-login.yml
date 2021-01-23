@@ -5,7 +5,7 @@ usage:
 
   orbs:
     # Replace x.y.z. with a real version number. All versions are listed here:
-    # https://circleci.com/orbs/registry/orb/blimmer/jest
+    # https://circleci.com/developer/orbs/orb/blimmer/jest
     jest: blimmer/jest@x.y.z
 
   workflows:
