@@ -27,7 +27,7 @@ test suite.
 
 If you want to learn more about the jest cache, check out [Jest Architecture video](https://youtu.be/3YDiloj8_d0) on YouTube.
 
-<div style='text-align: center'>
+<div style='display: flex; align-items: center; justify-content: center;'>
   <a href='https://youtu.be/3YDiloj8_d0'>
     <img src=https://img.youtube.com/vi/3YDiloj8_d0/0.jpg>
   </a>
