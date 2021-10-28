@@ -76,26 +76,30 @@ steps:
       condition:
         equal: [npm, << parameters.package-manager >>]
       steps:
-        - run: |
-            if [[ ! -z "<< parameters.jest-command-override >>" ]]; then
-              echo "Running override jest command:"
-              << parameters.jest-command-override >>
-            else
-              npx --no-install jest
-            fi
+        - run:
+            name: Run Jest tests
+            command: |
+              if [[ ! -z "<< parameters.jest-command-override >>" ]]; then
+                echo "Running override jest command:"
+                << parameters.jest-command-override >>
+              else
+                npx --no-install jest
+              fi
   - when:
       condition:
         or:
           - equal: [yarn, << parameters.package-manager >>]
           - equal: [yarn-berry, << parameters.package-manager >>]
       steps:
-        - run: |
-            if [[ ! -z "<< parameters.jest-command-override >>" ]]; then
-              echo "Running override jest command:"
-              << parameters.jest-command-override >>
-            else
-              yarn jest
-            fi
+        - run:
+            name: Run Jest tests
+            command: |
+              if [[ ! -z "<< parameters.jest-command-override >>" ]]; then
+                echo "Running override jest command:"
+                << parameters.jest-command-override >>
+              else
+                yarn jest
+              fi
   - when:
       condition: << parameters.jest-cache >>
       steps:
