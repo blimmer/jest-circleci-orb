@@ -16,7 +16,7 @@ parameters:
     type: boolean
     default: true
     description: Boolean for whether or not to checkout as a first step. Default is true.
-  pkg-manager:
+  package-manager:
     default: npm
     description: Select the default node package manager to use. NPM v5+ Required.
     enum:
@@ -24,7 +24,7 @@ parameters:
       - yarn
       - yarn-berry
     type: enum
-  pkg-manager-override-install-command:
+  package-manager-install-command-override:
     default: ''
     description: >
       By default, packages will be installed with "npm ci", "yarn install
@@ -33,7 +33,7 @@ parameters:
       Optionally supply a custom package installation command, with any
       additional flags needed.
     type: string
-  pkg-manager-cache:
+  package-manager-cache:
     default: true
     description: Cache your node packages automatically for faster install times.
     type: boolean
@@ -45,10 +45,17 @@ parameters:
     type: string
     default: .jest-cache
     description: The location of the jest cacheDirectory within the working directory
-  jest-command:
-    description: The command to use to run jest
+  jest-command-override:
     type: string
-    default: npx --no-install jest
+    default: ''
+    description: >
+      The command to use to run jest.
+
+      When package-manager is npm -> npx --no-install jest
+      When package-manager is yarn or yarn-berry -> yarn jest
+
+      Optionally supply a custom command. For instance, if you're using a yarn monorepo, you could provide
+      a `yarn workspaces foreach` command here.
 steps:
   - steps: << parameters.setup-steps >>
   - when:
@@ -56,18 +63,39 @@ steps:
       steps:
         - checkout
   - node/install-packages:
-      pkg-manager: << parameters.pkg-manager >>
-      override-ci-command: << parameters.pkg-manager-override-install-command >>
-      with-cache: << parameters.pkg-manager-cache >>
+      pkg-manager: << parameters.package-manager >>
+      override-ci-command: << parameters.package-manager-install-command-override >>
+      with-cache: << parameters.package-manager-cache >>
   - configure
   - when:
       condition: << parameters.jest-cache >>
       steps:
         - restore-cache:
             jest-cache-location: << parameters.jest-cache-location >>
-  - run:
-      name: Run jest tests
-      command: << parameters.jest-command >>
+  - when:
+      condition:
+        equal: [npm, << parameters.package-manager >>]
+      steps:
+        - run: |
+            if [[ ! -z "<< parameters.jest-command-override >>" ]]; then
+              echo "Running override jest command:"
+              << parameters.jest-command-override >>
+            else
+              npx --no-install jest
+            fi
+  - when:
+      condition:
+        or:
+          - equal: [yarn, << parameters.package-manager >>]
+          - equal: [yarn-berry, << parameters.package-manager >>]
+      steps:
+        - run: |
+            if [[ ! -z "<< parameters.jest-command-override >>" ]]; then
+              echo "Running override jest command:"
+              << parameters.jest-command-override >>
+            else
+              yarn jest
+            fi
   - when:
       condition: << parameters.jest-cache >>
       steps:
