@@ -16,14 +16,31 @@ parameters:
     type: boolean
     default: true
     description: Boolean for whether or not to checkout as a first step. Default is true.
+  pkg-manager:
+    default: npm
+    description: Select the default node package manager to use. NPM v5+ Required.
+    enum:
+      - npm
+      - yarn
+      - yarn-berry
+    type: enum
+  pkg-manager-override-install-command:
+    default: ''
+    description: >
+      By default, packages will be installed with "npm ci", "yarn install
+      --frozen-lockfile" or "yarn install --immutable".
+
+      Optionally supply a custom package installation command, with any
+      additional flags needed.
+    type: string
+  pkg-manager-cache:
+    default: true
+    description: Cache your node packages automatically for faster install times.
+    type: boolean
   jest-cache:
     type: boolean
     default: true
     description: Boolean for whether or not to restore/save the jest cache.
-  npm-install-command:
-    type: string
-    default: ci
-    description: The command to use to install dependencies with npm.
   jest-cache-location:
     type: string
     default: .jest-cache
@@ -38,17 +55,10 @@ steps:
       condition: << parameters.checkout >>
       steps:
         - checkout
-  - run:
-      name: Install dependencies
-      command: |
-        if [[ -e "package-lock.json" ]]; then
-          npm << parameters.npm-install-command >>
-        elif [[ -e "yarn.lock" ]]; then
-          yarn
-        else
-          echo 'no lockfile was present!'
-          exit 1
-        fi
+  - node/install-packages:
+      pkg-manager: << parameters.pkg-manager >>
+      override-ci-command: << parameters.pkg-manager-override-install-command >>
+      with-cache: << parameters.pkg-manager-cache >>
   - configure
   - when:
       condition: << parameters.jest-cache >>
