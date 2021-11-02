@@ -18,5 +18,5 @@ usage:
             setup-steps:
               - run:
                   name: Login to NPM
-                  command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+                  command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
 

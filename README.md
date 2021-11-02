@@ -77,6 +77,10 @@ orbs:
 
 Refer to the [orb registry listing](https://circleci.com/developer/orbs/orb/blimmer/jest) for more examples.
 
+## Breaking Changes
+
+Breaking changes, such as those between 0.x and 1.x, are described in [CHANGELOG.md](/CHANGELOG.md).
+
 ## Contributing
 
 I welcome [issues](https://github.com/blimmer/jest-circleci-orb/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) and
