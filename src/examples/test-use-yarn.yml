@@ -1,0 +1,16 @@
+description: Run jest tests
+
+usage:
+  version: 2.1
+
+  orbs:
+    # Replace x.y.z. with a real version number. All versions are listed here:
+    # https://circleci.com/developer/orbs/orb/blimmer/jest
+    jest: blimmer/jest@x.y.z
+
+  workflows:
+    test:
+      jobs:
+        - jest/test:
+            # Use `yarn` for yarn classic or `yarn-berry` for v2 and beyond
+            package-manager: yarn-berry
