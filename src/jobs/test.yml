@@ -105,9 +105,7 @@ steps:
                 yarn jest
               fi
   - when:
-      condition:
-        not:
-          - equal: [false, << parameters.test-result-path >>]
+      condition: << parameters.test-result-path >>
       steps:
         store_test_results:
           path: << parameters.test-result-path >>
