@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.0
+
+- Added the `test-result-path` parameter to the `jest/test` job. This value is passed to CircleCI's
+  [`store_test_results` command](https://circleci.com/docs/configuration-reference#storetestresults), which displays
+  test results inside the UI. Check out their [documentation](https://circleci.com/docs/collect-test-data#jest) for
+  details on configuring your test suite.
+
 ## v1.0.0
 
 Version 1.0.0 represents the first stable major release of this orb.
