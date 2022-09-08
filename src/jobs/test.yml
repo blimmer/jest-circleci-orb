@@ -56,6 +56,10 @@ parameters:
 
       Optionally supply a custom command. For instance, if you're using a yarn monorepo, you could provide
       a `yarn workspaces foreach` command here.
+  test-result-path:
+    type: string
+    default: ''
+    description: Path (absolute, or relative to your working_directory) to directory containing JUnit XML or Cucumber JSON test metadata files, or to a single test file. See https://circleci.com/docs/configuration-reference#storetestresults
 steps:
   - steps: << parameters.setup-steps >>
   - when:
@@ -100,6 +104,13 @@ steps:
               else
                 yarn jest
               fi
+  - when:
+      condition:
+        not:
+          - equal: [false, << parameters.test-result-path >>]
+      steps:
+        store_test_results:
+          path: << parameters.test-result-path >>
   - when:
       condition: << parameters.jest-cache >>
       steps:
