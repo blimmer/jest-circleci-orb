@@ -9,7 +9,7 @@ steps:
   - restore_cache:
       name: Restoring jest cache
       keys:
-        - jest-cache-{{ checksum "/tmp/jest-cache-previous-commit-hash.txt" }}
+        - jest-cache-{{ .Environment.CIRCLE_NODE_INDEX }}-{{ checksum "/tmp/jest-cache-previous-commit-hash.txt" }}
   - run:
       name: Copy jest cache to remote docker (if necessary)
       command: |
