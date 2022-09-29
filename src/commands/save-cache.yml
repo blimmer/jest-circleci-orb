@@ -8,7 +8,7 @@ parameters:
 steps:
   - save_cache:
       name: Save jest cache
-      key: jest-cache-{{ checksum "/tmp/jest-cache-current-commit-hash.txt" }}
+      key: jest-cache-{{ .Environment.CIRCLE_NODE_INDEX }}-{{ checksum "/tmp/jest-cache-current-commit-hash.txt" }}
       paths:
         - <<parameters.jest-cache-location>>
       when: always
